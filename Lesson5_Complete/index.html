@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://unpkg.com/ag-grid/dist/ag-grid.min.noStyle.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/ag-grid/dist/styles/ag-grid.css">
+  <link rel="stylesheet" href="https://unpkg.com/ag-grid/dist/styles/ag-theme-balham.css">
+</head>
+<body>
+  <h1>Idexx Bloodtest - Training Only - DO NOT USE</h1>
+  <button onclick="getSelectedRows()">Get Selected Rows</button>
+  <div id="myGrid" style="height: 600px;width:1200;" class="ag-theme-balham"></div>
+
+  <script type="text/javascript" charset="utf-8">
+
+    var columnDefs = [
+      {headerName: "ID", field: "id"},
+      {headerName: "Test", field: "test"},
+      {headerName: "Result", field: "result"},
+      {headerName: "Range", field: "range"},
+      {headerName: "Flag", field: "flag"},
+      {headerName: "Graph", field: "graph"},
+      {headerName: "Date", field: "date"}
+    ];
+
+    var gridOptions = {
+      columnDefs: columnDefs,
+      enableSorting: true,
+      enableFilter: true,
+      rowSelection: 'multiple'
+    };
+
+  var eGridDiv = document.querySelector('#myGrid');
+
+  new agGrid.Grid(eGridDiv, gridOptions);
+  
+  fetch('http://localhost:3000/api/tests/').then(function(response) {
+    return response.json();
+  }).then(function(data) {
+    gridOptions.api.setRowData(data);
+  })
+
+function getSelectedRows() {
+    var selectedNodes = gridOptions.api.getSelectedNodes()  
+    var selectedData = selectedNodes.map( function(node) { return node.data })
+    var selectedDataStringPresentation = selectedData.map( function(node) { 
+        return node.test + ' ' + node.result+ ' ' + node.range+ ' ' + node.flag+ ' ' + 
+        node.graph+ ' ' + node.date}).join('\n')
+    alert('Proof we have em now we can do what we like: \n'  + selectedDataStringPresentation);
+}
+  </script>
+</body>
+</html>
